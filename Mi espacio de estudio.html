@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi espacio de estudio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<style>
+:root{--bg:#f5f6fa;--card:#fff;--ink:#1c2030;--mute:#6b7287;--line:#e2e5ee;--acc:#4f46e5;--acc2:#e0e7ff;--ok:#16a34a;--warn:#d97706;--view:#dfe2ea;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141c;--card:#1b1e2a;--ink:#eceef5;--mute:#8b93aa;--line:#2b3042;--acc:#818cf8;--acc2:#2a2f55;--ok:#4ade80;--warn:#fbbf24;--view:#0e1016;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12141c;--card:#1b1e2a;--ink:#eceef5;--mute:#8b93aa;--line:#2b3042;--acc:#818cf8;--acc2:#2a2f55;--ok:#4ade80;--warn:#fbbf24;--view:#0e1016;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:18px;margin:0;flex:0 0 auto}
+.gp{flex:1;min-width:160px;max-width:420px}
+.gp small{color:var(--mute)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 11px}
+button:hover,.btn:hover{border-color:var(--acc)}
+.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+main{display:grid;grid-template-columns:240px minmax(0,1fr) 320px;gap:14px;padding:14px;height:calc(100vh - 62px)}
+.col{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.col h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:0;padding:12px 14px 6px}
+.list{overflow:auto;padding:6px 8px;flex:1}
+.doc{padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid transparent}
+.doc:hover{background:var(--bg)}.doc.on{background:var(--acc2);border-color:var(--acc)}
+.doc b{display:block;font-weight:600;word-break:break-word;font-size:14px}
+.doc small{color:var(--mute)}
+.up{margin:8px;text-align:center;display:block}
+.drop{outline:3px dashed var(--acc);outline-offset:-8px}
+.tb{display:flex;gap:6px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tb input{width:56px;font:inherit;padding:5px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.tb .sp{flex:1}
+#vw{flex:1;overflow:auto;background:var(--view);padding:12px;text-align:center}
+canvas{max-width:none;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.empty{margin:auto;text-align:center;color:var(--mute);padding:30px}
+.empty h3{color:var(--ink);margin:0 0 6px}
+.add{display:flex;gap:6px;padding:8px 10px}
+.add input{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:0}
+.add input:first-child{flex:1}.add input.pg{width:58px}
+.tabs{display:flex;gap:4px;padding:0 10px 6px}
+.tabs button{flex:1;padding:4px;font-size:13px}.tabs .on{background:var(--acc2);border-color:var(--acc)}
+.t{display:flex;align-items:flex-start;gap:8px;padding:8px;border-radius:8px;border-bottom:1px solid var(--line)}
+.t input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--ok);flex:none}
+.t span{flex:1;word-break:break-word}.t.done span{text-decoration:line-through;color:var(--mute)}
+.t .pgb{font-size:12px;color:var(--acc);border:1px solid var(--line);padding:1px 6px;border-radius:99px;cursor:pointer;flex:none}
+.t .x{border:0;background:none;color:var(--mute);padding:0 4px}
+.sum{padding:8px 14px;color:var(--mute);font-size:13px;display:flex;justify-content:space-between}
+.sum b.p{color:var(--warn)}.sum b.d{color:var(--ok)}
+@media (max-width:960px){main{grid-template-columns:1fr;height:auto}.col{min-height:240px}#vcol{height:75vh}}
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 Mi espacio de estudio</h1>
+  <div class="gp"><small id="gtxt">Sin temas aún</small><div class="bar"><i id="gbar"></i></div></div>
+  <button id="th" title="Cambiar tema">🌓</button>
+</header>
+<main>
+  <section class="col">
+    <h2>Mis PDFs</h2>
+    <div class="list" id="docs"></div>
+    <label class="btn pri up">＋ Subir PDF<input id="file" type="file" accept="application/pdf" multiple hidden></label>
+  </section>
+  <section class="col" id="vcol">
+    <div class="tb" id="tb" hidden>
+      <button id="prev">◀</button>
+      <input id="pn" type="number" min="1"><span id="pt"></span>
+      <button id="next">▶</button>
+      <span class="sp"></span>
+      <button id="zo">−</button><button id="zi">＋</button><button id="fit">Ajustar</button>
+    </div>
+    <div id="vw"><div class="empty"><h3>Sube un PDF para empezar</h3>Arrastra tus archivos aquí o usa el botón “Subir PDF”.<br>Se guardan en este navegador, no se envían a ningún servidor.</div></div>
+  </section>
+  <section class="col">
+    <h2 id="tt">Temas a estudiar</h2>
+    <div class="add"><input id="ti" placeholder="Nuevo tema…" maxlength="120"><input id="tp" class="pg" type="number" min="1" placeholder="Pág."><button id="ta" class="pri">＋</button></div>
+    <div class="tabs"><button data-f="all" class="on">Todos</button><button data-f="p">Me faltan</button><button data-f="d">Estudiados</button></div>
+    <div class="list" id="tl"></div>
+    <div class="sum" id="sum"></div>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+let meta=[],cur=null,pdf=null,page=1,scale=1,filter='all',db=null,mem=new Map(),busy=false,queued=false;
+try{meta=JSON.parse(localStorage.getItem('estudio_meta')||'[]')}catch(e){meta=[]}
+const save=()=>{try{localStorage.setItem('estudio_meta',JSON.stringify(meta))}catch(e){}};
+const idb=()=>new Promise(r=>{try{const q=indexedDB.open('estudio_pdfs',1);q.onupgradeneeded=()=>q.result.createObjectStore('f');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+const req=(m,fn)=>new Promise(r=>{if(!db)return r(null);try{const q=fn(db.transaction('f',m).objectStore('f'));q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+const putF=(id,b)=>{mem.set(id,b);return req('readwrite',s=>s.put(b,id))};
+const getF=async id=>(await req('readonly',s=>s.get(id)))||mem.get(id);
+const delF=id=>{mem.delete(id);return req('readwrite',s=>s.delete(id))};
+const cd=()=>meta.find(d=>d.id===cur);
+const stat=d=>{const n=d.topics.length,k=d.topics.filter(t=>t.done).length;return{n,k}};
+
+function renderDocs(){
+  $('#docs').innerHTML=meta.map(d=>{const{n,k}=stat(d);return `<div class="doc ${d.id===cur?'on':''}" data-id="${d.id}"><b>${esc(d.name)}</b><small>${n?k+' de '+n+' temas':'Sin temas'} · pág. ${d.page||1}</small><div class="bar"><i style="width:${n?k/n*100:0}%"></i></div></div>`}).join('')||'<div class="empty">Aún no hay PDFs</div>';
+  let N=0,K=0;meta.forEach(d=>{const s=stat(d);N+=s.n;K+=s.k});
+  $('#gtxt').textContent=N?`Progreso total: ${K} de ${N} temas estudiados (${Math.round(K/N*100)}%)`:'Sin temas aún';
+  $('#gbar').style.width=N?K/N*100+'%':'0';
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function renderTopics(){
+  const d=cd();
+  $('#tt').textContent=d?'Temas · '+d.name:'Temas a estudiar';
+  if(!d){$('#tl').innerHTML='<div class="empty">Selecciona un PDF para agregar sus temas.</div>';$('#sum').innerHTML='';return}
+  const list=d.topics.map((t,i)=>({...t,i})).filter(t=>filter==='all'||(filter==='d')===t.done);
+  $('#tl').innerHTML=list.map(t=>`<div class="t ${t.done?'done':''}"><input type="checkbox" data-i="${t.i}" ${t.done?'checked':''}><span>${esc(t.text)}</span>${t.pg?`<em class="pgb" data-pg="${t.pg}" style="font-style:normal">pág. ${t.pg}</em>`:''}<button class="x" data-x="${t.i}" title="Eliminar">✕</button></div>`).join('')||'<div class="empty">Nada por aquí.</div>';
+  const{n,k}=stat(d);$('#sum').innerHTML=`<span>Me faltan: <b class="p">${n-k}</b></span><span>Estudiados: <b class="d">${k}</b></span>`;
+}
+async function openDoc(id){
+  cur=id;renderDocs();renderTopics();
+  const d=cd(),buf=await getF(id);
+  if(!buf){$('#vw').innerHTML='<div class="empty"><h3>No se encontró el archivo</h3>Vuelve a subirlo.</div>';$('#tb').hidden=true;return}
+  $('#vw').innerHTML='<div class="empty">Cargando…</div>';
+  try{pdf=await pdfjsLib.getDocument({data:new Uint8Array(buf.slice(0))}).promise}catch(e){$('#vw').innerHTML='<div class="empty"><h3>No se pudo abrir este PDF</h3></div>';return}
+  $('#tb').hidden=false;$('#vw').innerHTML='<canvas id="cv"></canvas>';
+  page=Math.min(d.page||1,pdf.numPages);await fit(true);
+}
+async function fit(first){
+  const p=await pdf.getPage(page),v=p.getViewport({scale:1});
+  scale=Math.max(.4,Math.min(3,($('#vw').clientWidth-26)/v.width));draw();
+}
+async function draw(){
+  if(!pdf)return;if(busy){queued=true;return}
+  busy=true;
+  try{
+    const p=await pdf.getPage(page),v=p.getViewport({scale}),r=window.devicePixelRatio||1,c=$('#cv');
+    if(!c){busy=false;return}
+    c.width=v.width*r;c.height=v.height*r;c.style.width=v.width+'px';c.style.height=v.height+'px';
+    await p.render({canvasContext:c.getContext('2d'),viewport:v,transform:r!==1?[r,0,0,r,0,0]:null}).promise;
+  }catch(e){}
+  busy=false;$('#pn').value=page;$('#pt').textContent='/ '+pdf.numPages;
+  const d=cd();if(d){d.page=page;save();}
+  if(queued){queued=false;draw()}
+}
+function go(n){if(!pdf)return;page=Math.max(1,Math.min(pdf.numPages,n|0||1));$('#vw').scrollTop=0;draw();renderDocs()}
+async function addFiles(files){
+  for(const f of files){
+    if(f.type!=='application/pdf'&&!/\.pdf$/i.test(f.name))continue;
+    const id='d'+Date.now()+Math.random().toString(36).slice(2,6);
+    await putF(id,await f.arrayBuffer());
+    meta.push({id,name:f.name.replace(/\.pdf$/i,''),page:1,topics:[]});save();
+    if(!cur||files.length===1)cur=id;
+  }
+  renderDocs();if(cur)openDoc(cur);
+}
+if(!window.pdfjsLib){document.body.insertAdjacentHTML('afterbegin','<p style="padding:12px;color:#b91c1c">No se pudo cargar el lector de PDF.</p>')}
+$('#file').onchange=e=>{addFiles([...e.target.files]);e.target.value=''};
+['dragover','dragenter'].forEach(ev=>addEventListener(ev,e=>{e.preventDefault();document.body.classList.add('drop')}));
+['dragleave','drop'].forEach(ev=>addEventListener(ev,e=>{e.preventDefault();document.body.classList.remove('drop')}));
+addEventListener('drop',e=>addFiles([...e.dataTransfer.files]));
+$('#docs').onclick=e=>{const el=e.target.closest('.doc');if(el)openDoc(el.dataset.id)};
+$('#docs').ondblclick=async e=>{const el=e.target.closest('.doc');if(!el)return;const d=meta.find(x=>x.id===el.dataset.id);
+  const nm=prompt('Renombrar (deja vacío para eliminar el PDF):',d.name);if(nm===null)return;
+  if(nm.trim()){d.name=nm.trim()}else if(confirm('¿Eliminar este PDF y sus temas?')){meta=meta.filter(x=>x!==d);await delF(d.id);if(cur===d.id){cur=null;pdf=null;$('#tb').hidden=true;$('#vw').innerHTML='<div class="empty"><h3>Selecciona un PDF</h3></div>'}}
+  save();renderDocs();renderTopics()};
+$('#prev').onclick=()=>go(page-1);$('#next').onclick=()=>go(page+1);
+$('#pn').onchange=e=>go(+e.target.value);
+$('#zi').onclick=()=>{scale=Math.min(4,scale*1.2);draw()};$('#zo').onclick=()=>{scale=Math.max(.3,scale/1.2);draw()};
+$('#fit').onclick=()=>fit();
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;if(e.key==='ArrowRight')go(page+1);if(e.key==='ArrowLeft')go(page-1)});
+function addTopic(){
+  const d=cd();if(!d)return alert('Primero selecciona o sube un PDF.');
+  const t=$('#ti').value.trim();if(!t)return;
+  const pg=parseInt($('#tp').value)||0;d.topics.push({text:t,done:false,pg});
+  $('#ti').value='';$('#tp').value='';save();renderDocs();renderTopics();$('#ti').focus();
+}
+$('#ta').onclick=addTopic;$('#ti').onkeydown=e=>{if(e.key==='Enter')addTopic()};$('#tp').onkeydown=e=>{if(e.key==='Enter')addTopic()};
+$('#tl').onclick=e=>{const d=cd();if(!d)return;
+  if(e.target.dataset.i!==undefined&&e.target.type==='checkbox'){d.topics[+e.target.dataset.i].done=e.target.checked;save();renderDocs();renderTopics()}
+  if(e.target.dataset.x!==undefined){d.topics.splice(+e.target.dataset.x,1);save();renderDocs();renderTopics()}
+  if(e.target.dataset.pg)go(+e.target.dataset.pg)};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));renderTopics()});
+$('#th').onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).colorScheme==='dark';r.dataset.theme=dk?'light':'dark'};
+addEventListener('resize',()=>{if(pdf)fit()});
+(async()=>{db=await idb();renderDocs();renderTopics();if(meta.length)openDoc(meta[0].id)})();
+</script>
+</body>
+</html>
