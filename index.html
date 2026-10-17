@@ -58,6 +58,7 @@ canvas{max-width:none;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 <header>
   <h1>📚 Mi espacio de estudio</h1>
   <div class="gp"><small id="gtxt">Sin temas aún</small><div class="bar"><i id="gbar"></i></div></div>
+  <button id="plan" class="pri" title="Agregar el plan de estudio a tu lista">📅 Cargar plan</button>
   <button id="th" title="Cambiar tema">🌓</button>
 </header>
 <main>
@@ -98,7 +99,7 @@ const cd=()=>meta.find(d=>d.id===cur);
 const stat=d=>{const n=d.topics.length,k=d.topics.filter(t=>t.done).length;return{n,k}};
 
 function renderDocs(){
-  $('#docs').innerHTML=meta.map(d=>{const{n,k}=stat(d);return `<div class="doc ${d.id===cur?'on':''}" data-id="${d.id}"><b>${esc(d.name)}</b><small>${n?k+' de '+n+' temas':'Sin temas'} · pág. ${d.page||1}</small><div class="bar"><i style="width:${n?k/n*100:0}%"></i></div></div>`}).join('')||'<div class="empty">Aún no hay PDFs</div>';
+  $('#docs').innerHTML=meta.map(d=>{const{n,k}=stat(d);return `<div class="doc ${d.id===cur?'on':''}" data-id="${d.id}"><b>${esc(d.name)}</b><small>${n?k+' de '+n+' temas':'Sin temas'}${d.plan?'':' · pág. '+(d.page||1)}</small><div class="bar"><i style="width:${n?k/n*100:0}%"></i></div></div>`}).join('')||'<div class="empty">Aún no hay PDFs</div>';
   let N=0,K=0;meta.forEach(d=>{const s=stat(d);N+=s.n;K+=s.k});
   $('#gtxt').textContent=N?`Progreso total: ${K} de ${N} temas estudiados (${Math.round(K/N*100)}%)`:'Sin temas aún';
   $('#gbar').style.width=N?K/N*100+'%':'0';
@@ -115,6 +116,7 @@ function renderTopics(){
 async function openDoc(id){
   cur=id;renderDocs();renderTopics();
   const d=cd(),buf=await getF(id);
+  if(d.plan&&!buf){pdf=null;$('#tb').hidden=true;$('#vw').innerHTML='<div class="empty"><h3>Este es tu plan de estudio</h3>Marca cada tema a la derecha cuando lo termines.<br>Para leer un PDF, súbelo con el botón de la izquierda.</div>';return}
   if(!buf){$('#vw').innerHTML='<div class="empty"><h3>No se encontró el archivo</h3>Vuelve a subirlo.</div>';$('#tb').hidden=true;return}
   $('#vw').innerHTML='<div class="empty">Cargando…</div>';
   try{pdf=await pdfjsLib.getDocument({data:new Uint8Array(buf.slice(0))}).promise}catch(e){$('#vw').innerHTML='<div class="empty"><h3>No se pudo abrir este PDF</h3></div>';return}
@@ -178,6 +180,57 @@ $('#tl').onclick=e=>{const d=cd();if(!d)return;
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));renderTopics()});
 $('#th').onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).colorScheme==='dark';r.dataset.theme=dk?'light':'dark'};
 addEventListener('resize',()=>{if(pdf)fit()});
+
+/* ===== Plan de estudio (jueves 15 al jueves 29 de octubre) ===== */
+const PLAN=[
+{id:'plan_fisica',name:'Física General · prueba sáb 24',topics:[
+ ['Jue 15 · Cinemática circular: fórmulas, signos y punto de retorno',1],
+ ['Vie 16 · Mini control de cinemática circular (3 ejercicios)'],
+ ['Vie 16 · Newton: DCL, ejes y fuerzas (peso, normal, tensión, roce)'],
+ ['Sáb 17 · Newton: plano inclinado, poleas y bloques conectados'],
+ ['Sáb 17 · Ejercicio de mesa con bloque colgante (aceleración y tensión)'],
+ ['Dom 18 · Dinámica circular: aceleración centrípeta, cono y curva peraltada'],
+ ['Lun 19 · Resolver prueba 2023 (problemas 1, 2 y 3)'],
+ ['Mar 20 · Resolver prueba 2024 (ejercicios 1, 2 y 3) y corregir con la pauta'],
+ ['Mié 21 · Simulacro cronometrado de Física'],
+ ['Jue 22 · Reforzar los errores del simulacro'],
+ ['Vie 23 · Repaso liviano de fórmulas y descanso'],
+ ['Sáb 24 · PRUEBA DE FÍSICA']]},
+{id:'plan_algebra',name:'Álgebra Lineal · control mar 27 y prueba jue 29',topics:[
+ ['Vie 16 · Vectores, producto punto y ángulo; rectas y planos en R³ (Taller 2.1)'],
+ ['Sáb 17 · Subespacios (condiciones y contraejemplos) y combinaciones lineales'],
+ ['Dom 18 · Generadores y caracterización de subespacios con ecuaciones (Taller 2.2)'],
+ ['Lun 19 · Independencia y dependencia lineal, incluido el caso con parámetro k'],
+ ['Mar 20 · Bases y dimensión en R³, matrices y polinomios (Taller 2.3)'],
+ ['Mié 21 · Suma, intersección, fórmula de dimensiones y suma directa'],
+ ['Jue 22 · Coordenadas de un vector y cambio de base (Taller 2.4)'],
+ ['Dom 25 · Diagnóstico: resolver los talleres 2.1 a 2.4 con tiempo'],
+ ['Lun 26 · Corregir y reforzar; simulacro de control'],
+ ['Mar 27 · CONTROL DE ÁLGEBRA'],
+ ['Mié 28 · Nivel prueba: subespacios, U ∩ V, U + V, suma directa, parámetro k'],
+ ['Jue 29 · PRUEBA DE ÁLGEBRA']]},
+{id:'plan_calculo',name:'Cálculo en Varias Variables · prueba mar 27',topics:[
+ ['Vie 16 · Integrales dobles: dibujar la región y cambiar el orden de integración'],
+ ['Sáb 17 · Cambio de variables con jacobiano (Taller 2.1 II)'],
+ ['Dom 18 · Coordenadas polares (Taller 2.1 III)'],
+ ['Lun 19 · Coordenadas cilíndricas: integral triple y volumen'],
+ ['Mar 20 · Coordenadas esféricas y paso de cilíndricas a esféricas (Taller 2.3 I)'],
+ ['Mié 21 · Integrales triples en regiones complejas: la media luna (Taller 2.3 II)'],
+ ['Jue 22 · Diagnóstico: resolver los talleres 2.1 y 2.3'],
+ ['Vie 23 · Corregir y reforzar lo que falló'],
+ ['Dom 25 · Simulacro de prueba de Cálculo'],
+ ['Lun 26 · Corregir y reforzar'],
+ ['Mar 27 · PRUEBA DE CÁLCULO']]}
+];
+$('#plan').onclick=()=>{
+  let added=0;
+  PLAN.forEach(p=>{
+    if(meta.some(d=>d.id===p.id))return;
+    meta.push({id:p.id,name:p.name,page:1,plan:true,topics:p.topics.map(t=>({text:t[0],done:!!t[1],pg:0}))});added++;
+  });
+  if(!added){alert('El plan ya está cargado. Tus temas marcados se conservan.');return}
+  save();renderDocs();openDoc(PLAN[0].id);
+};
 (async()=>{db=await idb();renderDocs();renderTopics();if(meta.length)openDoc(meta[0].id)})();
 </script>
 </body>
